@@ -4,6 +4,6 @@ rock_library(simple_path_planner
     DEPS_PKGCONFIG base-lib nav_graph_search
     )
 
-rock_executable(simple_path_planner_bin Main.cpp
+rock_executable(simple_path_planner_test_bin Main.cpp
     DEPS simple_path_planner)
 
