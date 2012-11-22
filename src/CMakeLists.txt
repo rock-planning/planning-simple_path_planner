@@ -1,7 +1,9 @@
-rock_library(path_planner
-    SOURCES Dummy.cpp
-    HEADERS Dummy.hpp)
+rock_library(simple_path_planner
+    SOURCES SimplePathPlanner.cpp
+    HEADERS SimplePathPlanner.hpp
+    DEPS_PKGCONFIG base-lib nav_graph_search
+    )
 
-rock_executable(path_planner_bin Main.cpp
-    DEPS path_planner)
+rock_executable(simple_path_planner_bin Main.cpp
+    DEPS simple_path_planner)
 
