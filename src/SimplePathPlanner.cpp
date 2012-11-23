@@ -33,6 +33,9 @@ SimplePathPlanner::~SimplePathPlanner()
     if(mpDStar != NULL) {
         delete mpDStar; mpDStar = NULL;
     }
+    if(mpTraversabilityMap != NULL) {
+        delete mpTraversabilityMap; mpTraversabilityMap = NULL;
+    }
 }
 
 bool SimplePathPlanner::setStartPositionWorld(Eigen::Vector3d pos) {
@@ -158,7 +161,7 @@ bool SimplePathPlanner::calculateTrajectory() {
     return false;
 }
 
-inline std::vector<base::Waypoint> SimplePathPlanner::getTrajectory() const {
+std::vector<base::Waypoint> SimplePathPlanner::getTrajectory() {
     return mTrajectory;
 }
 

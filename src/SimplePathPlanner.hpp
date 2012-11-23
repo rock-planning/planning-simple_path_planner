@@ -85,7 +85,7 @@ class SimplePathPlanner {
      * Returns the trajectory containing waypoints from start to goal located in the world
      * frame. 
      */
-    inline std::vector<base::Waypoint> getTrajectory() const;
+    std::vector<base::Waypoint> getTrajectory();
 
     void printInformations();
 
