@@ -7,7 +7,6 @@
 
 #include <base/eigen.h>
 #include <base/logging.h>
-#include <base/waypoint.h>
 
 #include <nav_graph_search/traversability_map.hpp>
 #include <nav_graph_search/dstar.hpp>
@@ -85,7 +84,7 @@ class SimplePathPlanner {
      * Returns the trajectory containing waypoints from start to goal located in the world
      * frame. 
      */
-    std::vector<base::Waypoint> getTrajectory();
+    std::vector<base::Vector3d> getTrajectory();
 
     void printInformations();
 
@@ -97,7 +96,7 @@ class SimplePathPlanner {
 
     Eigen::Vector2i mStartPos, mGoalPos;
 
-    std::vector<base::Waypoint> mTrajectory; // Contains the waypoints from goal to start.
+    std::vector<base::Vector3d> mTrajectory; // Contains the waypoints from goal to start.
 
     SimplePathPlanner() {}
 
@@ -105,7 +104,7 @@ class SimplePathPlanner {
      * Transforms the traversability map point to the world and adds the world point
      * to 'mTrajectory'.
      */
-    void addWaypointToTrajectory(size_t xi, size_t yi);
+    void addVectorToTrajectory(size_t xi, size_t yi);
 };
 
 #endif

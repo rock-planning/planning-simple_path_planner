@@ -126,8 +126,7 @@ bool SimplePathPlanner::calculateTrajectory() {
     nav_graph_search::NeighbourConstIterator parent;
     size_t xi = mStartPos[0], yi = mStartPos[1];
     size_t next_xi = 0, next_yi = 0;
-    base::Waypoint waypoint;
-    addWaypointToTrajectory(xi,yi);
+    addVectorToTrajectory(xi,yi);
 
     // Run through the trajectory from goal to start.
     do {
@@ -147,7 +146,7 @@ bool SimplePathPlanner::calculateTrajectory() {
             return false;
         }    
 
-        addWaypointToTrajectory(next_xi, next_yi);
+        addVectorToTrajectory(next_xi, next_yi);
 
         if(next_xi == (size_t)mGoalPos[0] && next_yi == (size_t)mGoalPos[1]) { // Trajectory found.
             LOG_INFO("Trajectory found containing %d waypoints", mTrajectory.size());
@@ -161,7 +160,7 @@ bool SimplePathPlanner::calculateTrajectory() {
     return false;
 }
 
-std::vector<base::Waypoint> SimplePathPlanner::getTrajectory() {
+std::vector<base::Vector3d> SimplePathPlanner::getTrajectory() {
     return mTrajectory;
 }
 
@@ -174,7 +173,7 @@ void SimplePathPlanner::printInformations() {
     std::cout << "Trajectory from start to goal:" << std::endl;
     base::Vector3d v;
     for(unsigned int i=0; i < mTrajectory.size(); ++i) {
-        v = mTrajectory.at(i).position;
+        v = mTrajectory[i];
         std::cout << "(" << v[0] << ", " << v[1] << ", " << v[2] << ") " << std::endl; 
     }
 
@@ -189,11 +188,10 @@ void SimplePathPlanner::printInformations() {
 }
 
 // PRIVATE
-void SimplePathPlanner::addWaypointToTrajectory(size_t xi, size_t yi) {
+void SimplePathPlanner::addVectorToTrajectory(size_t xi, size_t yi) {
     nav_graph_search::PointID point(xi, yi);
-    base::Waypoint waypoint;
-    waypoint.position = mpTraversabilityMap->toWorld(point);
-    mTrajectory.push_back(waypoint);
+    base::Vector3d vector = mpTraversabilityMap->toWorld(point);
+    mTrajectory.push_back(vector);
     LOG_DEBUG("Added waypoint to trajectory, local (%d,%d) transformed to world (%4.2f,%4.2f,%4.2f)",
-            xi, yi, waypoint.position[0], waypoint.position[1], waypoint.position[2]);
+            xi, yi, vector[0], vector[1], vector[2]);
 }
