@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
     terrain_class.cost = 3.5 / 12;
     terrain_classes.push_back(terrain_class);
 
-    SimplePathPlanner::SimplePathPlanner planner(map, terrain_classes, 0, false);
+    SimplePathPlanner planner(map, terrain_classes, 0, false);
     planner.setStartPositionLocal(Eigen::Vector2i(1,1));
     planner.setGoalPositionLocal(Eigen::Vector2i(8,8));
 
