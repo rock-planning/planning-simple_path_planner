@@ -3,4 +3,7 @@
 cmake_minimum_required(VERSION 2.6)
 include($ENV{ROCK_CMAKE_MACROS}/Rock.cmake)
 rock_init(simple_path_planner 0.1)
+
+add_definitions( -DEIGEN_DONT_VECTORIZE -DEIGEN_DISABLE_UNALIGNED_ARRAY_ASSERT)
+
 rock_standard_layout()

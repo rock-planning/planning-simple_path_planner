@@ -74,6 +74,19 @@ bool SimplePathPlanner::setGoalPositionLocal(Eigen::Vector2i pos) {
     }
 }
 
+bool SimplePathPlanner::toLocal(double x, double y, size_t& xi, size_t& yi) {
+    nav_graph_search::PointID point = mpTraversabilityMap->toLocal(Eigen::Vector3d(x,y,0));
+    if(point.x >= 0 && point.x < mpTraversabilityMap->xSize() &&
+            point.y >= 0 && point.y < mpTraversabilityMap->ySize()) {
+        xi = point.x;
+        yi = point.y;
+        return true;
+    } else {
+        LOG_INFO("Point (%d,%d) (world) is not located within the grid", x, y);
+        return false;
+    }
+}
+
 bool SimplePathPlanner::updateCell(size_t xi, size_t yi, uint8_t value) {
     if((long)xi < mpTraversabilityMap->xSize() && (long)yi < mpTraversabilityMap->ySize()) {
         mpTraversabilityMap->setValue(xi, yi, value);

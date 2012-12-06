@@ -59,6 +59,13 @@ class SimplePathPlanner {
     bool setGoalPositionLocal(Eigen::Vector2i pos);
 
     /**
+     * Transforms the point in the world to the local grid.
+     * If the point is not within the grid, false is returned.
+     */
+    bool toLocal(double x, double y, size_t& xi, size_t& yi);
+    
+
+    /**
      * Updates the cell in the nav-graph-search traversability map.
      * \param class_value Class value used in the nav-graph-search
      * traversability map. The envire class values can be used directly, if
