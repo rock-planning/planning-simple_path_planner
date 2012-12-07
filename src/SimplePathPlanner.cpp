@@ -20,6 +20,7 @@ SimplePathPlanner::SimplePathPlanner(nav_graph_search::TraversabilityMap& trav_m
             mTerrainClasses, 
             robot_footprint, 
             inflate_max);
+    mpDStar->setCostCutoff(0); //disable
 
     // Create lookup table for terrain classes.
     std::list<nav_graph_search::TerrainClass>::iterator it = mTerrainClasses.begin();
@@ -125,11 +126,15 @@ bool SimplePathPlanner::calculateTrajectory() {
 
     // Tries to calculate the trajectory using 'max_cost == 0'.
     double ret = mpDStar->run(mGoalPos[0], mGoalPos[1], mStartPos[0], mStartPos[1]);
-    if(ret == base::unknown<double>()) {
+    if(base::isUnknown(ret)) {
         LOG_INFO("Trajectory could not be calculated");
         return false;
     } else {
         LOG_INFO("Trajectory found, calculated cost: %4.2f", ret);
+        mpDStar->writeCostMap("costMap_toStart_optimal");
+        std::cout << "to start: optimal before expansion is " << ret << std::endl;
+        mpDStar->expandUntil(ret * 1.4);
+	    mpDStar->writeCostMap("costMap_toStart_expanded");
     }
 
     // Fill mTrajectory.
@@ -198,6 +203,9 @@ void SimplePathPlanner::printInformations() {
         std::cout << (int)mpTraversabilityMap->getValue(i, 0) << " ";
     }
     std::cout << " " << std::endl;
+
+    std::cout << "Store DStar cost map to dstar_cost_map.ppm" << std::endl;
+    mpDStar->writeCostMap("dstar_cost_map");
 }
 
 // PRIVATE

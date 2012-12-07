@@ -93,6 +93,9 @@ class SimplePathPlanner {
      */
     std::vector<base::Vector3d> getTrajectory();
 
+    /**
+     * Prints 
+     */
     void printInformations();
 
  private:
