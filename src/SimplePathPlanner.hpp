@@ -23,6 +23,7 @@ class SimplePathPlanner {
      * All other parameters (such as grid size, grid content and transformations)
      * are included in the traversability map.
      * If the default paramters are used, every patch get the cost value of 'terrain_classes'.
+     * @TODO Test: Reallocate the SimplePathPlanner / nav_graph_search before use may allow 'each-time-planning'
      * \param trav_map An internal copy of the passed object will be created. 
      * \param terrain_classes Only the parameters 'in' and 'out' (can get the same value) and 'cost' 
      * (calculated with x / cost) have to be used.\n

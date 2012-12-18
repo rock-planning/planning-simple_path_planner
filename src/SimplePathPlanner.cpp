@@ -121,6 +121,7 @@ bool SimplePathPlanner::getCell(size_t const xi, size_t const yi, uint8_t& class
 bool SimplePathPlanner::calculateTrajectory() {
 
     if(mGoalPos[0] == mStartPos[0] &&  mGoalPos[1] == mStartPos[1]) {
+        LOG_INFO("Start- and goal position are the same, return true");
         return true;
     }
 
