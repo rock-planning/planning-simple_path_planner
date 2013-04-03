@@ -16,11 +16,11 @@ SimplePathPlanner::SimplePathPlanner(nav_graph_search::TraversabilityMap& trav_m
     // Create internal copy of the passed traversability map.
     mpTraversabilityMap = new nav_graph_search::TraversabilityMap(trav_map);
     mTerrainClasses = terrain_classes;
-    mpDStar = new nav_graph_search::DStarLite(*mpTraversabilityMap, 
+    mpDStar = new nav_graph_search::DStar(*mpTraversabilityMap, 
             mTerrainClasses, 
             robot_footprint, 
             inflate_max);
-    //mpDStar->setCostCutoff(0); //disable
+    mpDStar->setCostCutoff(0); //disable
 
     // Create lookup table for terrain classes.
     std::list<nav_graph_search::TerrainClass>::iterator it = mTerrainClasses.begin();
@@ -90,9 +90,9 @@ bool SimplePathPlanner::toLocal(double x, double y, size_t& xi, size_t& yi) {
 
 bool SimplePathPlanner::updateCell(size_t xi, size_t yi, uint8_t value) {
     if((long)xi < mpTraversabilityMap->xSize() && (long)yi < mpTraversabilityMap->ySize()) {
-        //mpTraversabilityMap->setValue(xi, yi, value);
-        mpDStar->setTraversability(xi,yi,value); // Should be the only required update.
-        //mpDStar->updated(xi, yi);
+        mpTraversabilityMap->setValue(xi, yi, value);
+        mpDStar->setTraversability(xi,yi,value);
+        mpDStar->updated(xi, yi);
         return true;
     } else {
         LOG_WARN("Cell could not be updated, (%d,%d) is not located within the grid");
@@ -132,10 +132,10 @@ bool SimplePathPlanner::calculateTrajectory() {
         return false;
     } else {
         LOG_INFO("Trajectory found, calculated cost: %4.2f", ret);
-        //mpDStar->writeCostMap("costMap_toStart_optimal");
+        mpDStar->writeCostMap("costMap_toStart_optimal");
         std::cout << "to start: optimal before expansion is " << ret << std::endl;
-        //mpDStar->expandUntil(ret * 1.4);
-	    //mpDStar->writeCostMap("costMap_toStart_expanded");
+        mpDStar->expandUntil(ret * 1.4);
+	    mpDStar->writeCostMap("costMap_toStart_expanded");
     }
 
     // Fill mTrajectory.
@@ -206,7 +206,7 @@ void SimplePathPlanner::printInformations() {
     std::cout << " " << std::endl;
 
     std::cout << "Store DStar cost map to dstar_cost_map.ppm" << std::endl;
-    //mpDStar->writeCostMap("dstar_cost_map");
+    mpDStar->writeCostMap("dstar_cost_map");
 }
 
 // PRIVATE

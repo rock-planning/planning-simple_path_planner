@@ -9,7 +9,7 @@
 #include <base/logging.h>
 
 #include <nav_graph_search/traversability_map.hpp>
-#include <nav_graph_search/dstar_lite.hpp>
+#include <nav_graph_search/dstar.hpp>
 #include <nav_graph_search/terrain_classes.hpp>
 #include <nav_graph_search/point.hpp>
 
@@ -101,7 +101,7 @@ class SimplePathPlanner {
 
  private:
     nav_graph_search::TraversabilityMap* mpTraversabilityMap;
-    nav_graph_search::DStarLite* mpDStar;
+    nav_graph_search::DStar* mpDStar;
     std::list<nav_graph_search::TerrainClass> mTerrainClasses;
     std::map<int, int> mTerrainClassInToOut;
 
