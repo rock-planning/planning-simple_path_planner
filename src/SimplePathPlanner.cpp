@@ -16,10 +16,11 @@ SimplePathPlanner::SimplePathPlanner(nav_graph_search::TraversabilityMap& trav_m
     // Create internal copy of the passed traversability map.
     mpTraversabilityMap = new nav_graph_search::TraversabilityMap(trav_map);
     mTerrainClasses = terrain_classes;
-    mpDStar = new nav_graph_search::DStarLite(*mpTraversabilityMap, 
+    mpDStar = new nav_graph_search::DStar(*mpTraversabilityMap, 
             mTerrainClasses, 
             robot_footprint, 
             inflate_max);
+    mpDStar->setCostCutoff(0); //disable
 
     // Create lookup table for terrain classes.
     std::list<nav_graph_search::TerrainClass>::iterator it = mTerrainClasses.begin();
@@ -131,17 +132,51 @@ bool SimplePathPlanner::calculateTrajectory() {
         return false;
     } else {
         LOG_INFO("Trajectory found, calculated cost: %4.2f", ret);
+        mpDStar->writeCostMap("costMap_toStart_optimal");
+        std::cout << "to start: optimal before expansion is " << ret << std::endl;
+        mpDStar->expandUntil(ret * 1.4);
+	    mpDStar->writeCostMap("costMap_toStart_expanded");
     }
 
     // Fill mTrajectory.
     mTrajectory.clear();
-    std::vector<base::Vector3d> path = mpDStar->getTrajectory();
-    base::Vector3d v;
-    for(int i=0; i<path.size(); ++i) {
-        v = path[i];
-        addVectorToTrajectory(v[0], v[1]);
-    }
-    return true;
+
+    nav_graph_search::GridGraph const& grid_graph = mpDStar->graph();
+    nav_graph_search::NeighbourConstIterator parent;
+    size_t xi = mStartPos[0], yi = mStartPos[1];
+    size_t next_xi = 0, next_yi = 0;
+    addVectorToTrajectory(xi,yi);
+
+    // Run through the trajectory from goal to start.
+    do {
+        parent = grid_graph.parentsBegin(xi, yi); // Next optimal neighbour patch/cell to (xi,yi).
+        next_xi = parent.x(); 
+        next_yi = parent.y();
+
+        if((int)next_xi > mpTraversabilityMap->xSize() - 1 || (int)next_yi > mpTraversabilityMap->ySize() - 1) {
+            LOG_ERROR("Patch (%d,%d) is not located within the map, erroneous trajectory found!");
+            return false;
+        }
+
+        if(next_xi == xi && next_yi == yi) { // Stucked.
+            double distance_to_goal = sqrt(pow((mGoalPos[0] - xi),2) + pow((mGoalPos[1] - yi),2));
+            LOG_WARN("Trajectory not found, stucked at (%d,%d), still %4.2f patches to go", 
+                    next_xi, next_yi, distance_to_goal);
+            return false;
+        }    
+
+        addVectorToTrajectory(next_xi, next_yi);
+
+        if(next_xi == (size_t)mGoalPos[0] && next_yi == (size_t)mGoalPos[1]) { // Trajectory found.
+            LOG_INFO("Trajectory found containing %d waypoints", mTrajectory.size());
+            return true;
+        }
+
+        xi = next_xi; yi = next_yi;
+    } while(!parent.isEnd());
+
+    LOG_WARN("Start position not reached and no further parent-patches available");
+    return false;
 }
 
 std::vector<base::Vector3d> SimplePathPlanner::getTrajectory() {
@@ -169,6 +204,9 @@ void SimplePathPlanner::printInformations() {
         std::cout << (int)mpTraversabilityMap->getValue(i, 0) << " ";
     }
     std::cout << " " << std::endl;
+
+    std::cout << "Store DStar cost map to dstar_cost_map.ppm" << std::endl;
+    mpDStar->writeCostMap("dstar_cost_map");
 }
 
 // PRIVATE
