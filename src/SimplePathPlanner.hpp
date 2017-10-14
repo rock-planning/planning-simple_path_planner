@@ -5,8 +5,8 @@
 #include <string>
 #include <vector>
 
-#include <base/eigen.h>
-#include <base/logging.h>
+#include <base/Eigen.hpp>
+#include <base-logging/Logging.hpp>
 
 #include <nav_graph_search/traversability_map.hpp>
 #include <nav_graph_search/dstar.hpp>

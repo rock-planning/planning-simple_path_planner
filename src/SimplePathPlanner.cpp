@@ -1,4 +1,5 @@
 #include "SimplePathPlanner.hpp"
+#include <iomanip>
 
 // PUBLIC
 SimplePathPlanner::SimplePathPlanner(nav_graph_search::TraversabilityMap& trav_map,
